@@ -1,16 +1,8 @@
-/** Internal auth email domain — users sign in with username only. */
+/** Internal auth email domain — must match server setup (never derive from public site URL). */
 function authInternalDomain(): string {
   const fromEnv = import.meta.env.VITE_AUTH_INTERNAL_DOMAIN;
   if (typeof fromEnv === "string" && fromEnv.trim()) {
     return fromEnv.trim().replace(/^@/, "");
-  }
-  const siteUrl = import.meta.env.VITE_SITE_URL;
-  if (siteUrl) {
-    try {
-      return new URL(siteUrl).host;
-    } catch {
-      /* fall through */
-    }
   }
   return "trackweeb.cm";
 }

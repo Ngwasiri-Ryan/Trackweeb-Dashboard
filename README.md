@@ -24,6 +24,7 @@ Copy `.env.example` to `.env` and fill in brand + Supabase vars.
 |----------|---------|
 | `VITE_APP_NAME` | Client brand name (build-time) |
 | `VITE_SITE_URL` | Public site URL (receipts, SEO) |
+| `VITE_AUTH_INTERNAL_DOMAIN` | Username login domain (default `trackweeb.cm` — set on Vercel at build time) |
 | `VITE_SUPABASE_URL` | Supabase project URL |
 | `VITE_SUPABASE_ANON_KEY` | Public anon key |
 | `VITE_GOOGLE_MAPS_API_KEY` | Google Maps |

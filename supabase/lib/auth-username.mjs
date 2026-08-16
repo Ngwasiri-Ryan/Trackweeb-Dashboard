@@ -1,4 +1,4 @@
-/** Internal auth email domain — not shown to users; set per client deploy. */
+/** Internal auth email domain — must match client VITE_AUTH_INTERNAL_DOMAIN default. */
 export function authInternalDomain() {
   return (
     process.env.AUTH_INTERNAL_DOMAIN ??
