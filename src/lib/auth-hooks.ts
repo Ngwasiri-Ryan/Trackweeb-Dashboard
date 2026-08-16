@@ -3,6 +3,7 @@ import { supabase, getProfile } from "./supabase";
 import { listShipments } from "./shipments-service";
 import { getShipment } from "./shipments-service";
 import { searchShipments } from "./dashboard-service";
+import { ADMIN_USERNAME } from "./admin-credentials";
 
 export function useAuthUser() {
   return useQuery({
@@ -13,7 +14,7 @@ export function useAuthUser() {
       const tenant = result.profile.tenants as { id: string; name: string; subdomain: string };
       return {
         id: result.user.id,
-        email: result.user.email ?? "",
+        username: ADMIN_USERNAME,
         full_name: result.profile.full_name,
         tenant_id: result.profile.tenant_id,
         tenant: tenant,

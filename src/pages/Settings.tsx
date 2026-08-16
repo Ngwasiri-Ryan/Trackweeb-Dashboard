@@ -135,7 +135,7 @@ export default function SettingsPage() {
             <SurfaceCard className="space-y-4 lg:col-span-1" padded>
               <div className="flex flex-col items-center text-center">
                 <div className="profile-avatar">
-                  {(me?.full_name?.[0] ?? me?.email?.[0] ?? "A").toUpperCase()}
+                  {(me?.full_name?.[0] ?? me?.username?.[0] ?? "A").toUpperCase()}
                 </div>
                 <h3 className="mt-3 text-sm font-bold text-foreground">{me?.full_name ?? "Admin"}</h3>
                 <p className="text-xs text-muted-foreground">@{me?.username ?? "admin"}</p>

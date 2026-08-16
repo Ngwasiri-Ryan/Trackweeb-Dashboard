@@ -34,7 +34,7 @@ export function Header({ mobileNav }: { mobileNav?: ReactNode }) {
 
   const meQ = useAuthUser();
   const user = meQ.data;
-  const initial = (user?.full_name?.[0] ?? user?.email?.[0] ?? "A").toUpperCase();
+  const initial = (user?.full_name?.[0] ?? user?.username?.[0] ?? "A").toUpperCase();
   const shipmentMatch = path.match(/^\/shipments\/([^/]+)$/);
   const shipmentId = shipmentMatch?.[1] ?? null;
   const isShipmentDetail = !!shipmentId && shipmentId !== "new" && shipmentId !== "scan";
@@ -87,7 +87,7 @@ export function Header({ mobileNav }: { mobileNav?: ReactNode }) {
               </div>
               <div className="hidden text-left lg:block">
                 <div className="text-xs leading-none font-bold text-foreground">
-                  {user?.full_name ?? user?.email ?? "Admin"}
+                  {user?.full_name ?? user?.username ?? "Admin"}
                 </div>
                 <div className="mt-0.5 text-[10px] font-medium text-muted-foreground">
                   {user?.tenant?.name ?? "Operations"}
@@ -99,7 +99,7 @@ export function Header({ mobileNav }: { mobileNav?: ReactNode }) {
           <DropdownMenuContent align="end" className="w-52">
             <DropdownMenuLabel className="truncate font-normal">
               <div className="text-sm font-medium text-foreground">{user?.full_name ?? "Admin"}</div>
-              <div className="truncate text-xs text-muted-foreground">{user?.email}</div>
+              <div className="truncate text-xs text-muted-foreground">@{user?.username}</div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>

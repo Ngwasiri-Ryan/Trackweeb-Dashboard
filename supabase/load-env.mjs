@@ -4,7 +4,12 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-import { usernameToAuthEmail } from "./lib/auth-username.mjs";
+import {
+  ADMIN_AUTH_EMAIL,
+  ADMIN_FULL_NAME,
+  ADMIN_PASSWORD,
+  ADMIN_USERNAME,
+} from "./lib/admin-credentials.mjs";
 
 export function loadDotEnv(path) {
   if (!existsSync(path)) return;
@@ -41,11 +46,11 @@ export function getSetupConfig() {
       ? `postgresql://postgres.${projectRef}:${encodeURIComponent(dbPassword)}@${dbPooler}-${dbRegion}.pooler.supabase.com:5432/postgres`
       : "");
 
-  const adminUsername = process.env.ADMIN_USERNAME ?? "trackweeb";
+  const adminUsername = process.env.ADMIN_USERNAME ?? ADMIN_USERNAME;
   const adminAuthEmail =
-    process.env.ADMIN_AUTH_EMAIL ??
-    process.env.ADMIN_EMAIL ??
-    usernameToAuthEmail(adminUsername);
+    process.env.ADMIN_AUTH_EMAIL ?? process.env.ADMIN_EMAIL ?? ADMIN_AUTH_EMAIL;
+  const adminPassword = process.env.ADMIN_PASSWORD ?? ADMIN_PASSWORD;
+  const adminFullName = process.env.ADMIN_FULL_NAME ?? ADMIN_FULL_NAME;
 
   return {
     supabaseUrl,
@@ -53,8 +58,8 @@ export function getSetupConfig() {
     dbUrl,
     adminUsername,
     adminAuthEmail,
-    adminPassword: process.env.ADMIN_PASSWORD ?? "admin123",
-    adminFullName: process.env.ADMIN_FULL_NAME ?? "Admin",
+    adminPassword,
+    adminFullName: adminFullName,
     tenantName: process.env.TENANT_NAME ?? "Logistics Inc",
     tenantSubdomain: process.env.TENANT_SUBDOMAIN ?? "logistics-inc",
     tenantId: "a0000000-0000-4000-8000-000000000001",

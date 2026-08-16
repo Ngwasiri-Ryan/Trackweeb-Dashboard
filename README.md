@@ -24,7 +24,6 @@ Copy `.env.example` to `.env` and fill in brand + Supabase vars.
 |----------|---------|
 | `VITE_APP_NAME` | Client brand name (build-time) |
 | `VITE_SITE_URL` | Public site URL (receipts, SEO) |
-| `VITE_AUTH_INTERNAL_DOMAIN` | Username login domain (default `trackweeb.cm` — set on Vercel at build time) |
 | `VITE_SUPABASE_URL` | Supabase project URL |
 | `VITE_SUPABASE_ANON_KEY` | Public anon key |
 | `VITE_GOOGLE_MAPS_API_KEY` | Google Maps |
@@ -33,12 +32,14 @@ Copy `.env.example` to `.env` and fill in brand + Supabase vars.
 | `SUPABASE_SERVICE_ROLE_KEY` | Auto-setup only (server-side, never `VITE_`) |
 | `SUPABASE_DB_PASSWORD` | Auto-setup only (creates tables on first run) |
 
-Default admin (created automatically if missing):
+Default login is **hardcoded** in `src/lib/admin-credentials.ts`:
 
 | Field | Value |
 |-------|-------|
 | Username | `trackweeb` |
 | Password | `admin123` |
+
+Change those constants per client — no env vars needed for login.
 | Tenant | Logistics Inc (`logistics-inc`) |
 
 ### 2. Auto-setup (first run)
@@ -74,7 +75,6 @@ supabase secrets set \
   RESEND_FROM_EMAIL="Trackweeb <onboarding@resend.dev>" \
   SUPPORT_EMAIL=... \
   SUPABASE_DB_PASSWORD=... \
-  ADMIN_USERNAME=trackweeb \
   ADMIN_PASSWORD=admin123
 supabase functions deploy send-email
 supabase functions deploy ensure-setup

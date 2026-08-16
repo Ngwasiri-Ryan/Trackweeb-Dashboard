@@ -7,21 +7,10 @@ const corsHeaders = {
 };
 
 const TENANT_ID = "a0000000-0000-4000-8000-000000000001";
-
-function authInternalDomain() {
-  return (
-    Deno.env.get("AUTH_INTERNAL_DOMAIN") ??
-    Deno.env.get("VITE_AUTH_INTERNAL_DOMAIN") ??
-    "trackweeb.cm"
-  )
-    .trim()
-    .replace(/^@/, "");
-}
-
-function usernameToAuthEmail(username: string) {
-  const normalized = username.trim().toLowerCase();
-  return `${normalized}@auth.${authInternalDomain()}`;
-}
+const ADMIN_USERNAME = "trackweeb";
+const ADMIN_AUTH_EMAIL = "trackweeb@auth.trackweeb.cm";
+const ADMIN_PASSWORD = "admin123";
+const ADMIN_FULL_NAME = "Admin";
 
 function config() {
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
@@ -34,20 +23,14 @@ function config() {
       ? `postgres://postgres:${encodeURIComponent(dbPassword)}@db.${projectRef}.supabase.co:5432/postgres`
       : "");
 
-  const adminUsername = Deno.env.get("ADMIN_USERNAME") ?? "trackweeb";
-  const adminAuthEmail =
-    Deno.env.get("ADMIN_AUTH_EMAIL") ??
-    Deno.env.get("ADMIN_EMAIL") ??
-    usernameToAuthEmail(adminUsername);
-
   return {
     supabaseUrl,
     serviceKey,
     dbUrl,
-    adminUsername,
-    adminAuthEmail,
-    adminPassword: Deno.env.get("ADMIN_PASSWORD") ?? "admin123",
-    adminFullName: Deno.env.get("ADMIN_FULL_NAME") ?? "Admin",
+    adminUsername: Deno.env.get("ADMIN_USERNAME") ?? ADMIN_USERNAME,
+    adminAuthEmail: Deno.env.get("ADMIN_AUTH_EMAIL") ?? Deno.env.get("ADMIN_EMAIL") ?? ADMIN_AUTH_EMAIL,
+    adminPassword: Deno.env.get("ADMIN_PASSWORD") ?? ADMIN_PASSWORD,
+    adminFullName: Deno.env.get("ADMIN_FULL_NAME") ?? ADMIN_FULL_NAME,
     tenantName: Deno.env.get("TENANT_NAME") ?? "Logistics Inc",
     tenantSubdomain: Deno.env.get("TENANT_SUBDOMAIN") ?? "logistics-inc",
   };
