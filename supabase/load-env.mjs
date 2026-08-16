@@ -43,7 +43,7 @@ export function getSetupConfig() {
     supabaseUrl,
     serviceKey: process.env.SUPABASE_SERVICE_ROLE_KEY ?? "",
     dbUrl,
-    adminEmail: process.env.ADMIN_EMAIL ?? "ryanngwasiri@gmail.com",
+    adminEmail: process.env.ADMIN_EMAIL ?? "admin@trackweeb.cm",
     adminPassword: process.env.ADMIN_PASSWORD ?? "admin123",
     adminFullName: process.env.ADMIN_FULL_NAME ?? "Admin",
     tenantName: process.env.TENANT_NAME ?? "Logistics Inc",

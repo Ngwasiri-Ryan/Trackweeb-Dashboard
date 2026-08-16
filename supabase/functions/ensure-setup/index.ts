@@ -23,7 +23,7 @@ function config() {
     supabaseUrl,
     serviceKey,
     dbUrl,
-    adminEmail: Deno.env.get("ADMIN_EMAIL") ?? "ryanngwasiri@gmail.com",
+    adminEmail: Deno.env.get("ADMIN_EMAIL") ?? "admin@trackweeb.cm",
     adminPassword: Deno.env.get("ADMIN_PASSWORD") ?? "admin123",
     adminFullName: Deno.env.get("ADMIN_FULL_NAME") ?? "Admin",
     tenantName: Deno.env.get("TENANT_NAME") ?? "Logistics Inc",
