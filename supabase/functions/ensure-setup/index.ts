@@ -8,6 +8,21 @@ const corsHeaders = {
 
 const TENANT_ID = "a0000000-0000-4000-8000-000000000001";
 
+function authInternalDomain() {
+  return (
+    Deno.env.get("AUTH_INTERNAL_DOMAIN") ??
+    Deno.env.get("VITE_AUTH_INTERNAL_DOMAIN") ??
+    "trackweeb.cm"
+  )
+    .trim()
+    .replace(/^@/, "");
+}
+
+function usernameToAuthEmail(username: string) {
+  const normalized = username.trim().toLowerCase();
+  return `${normalized}@auth.${authInternalDomain()}`;
+}
+
 function config() {
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
@@ -19,11 +34,18 @@ function config() {
       ? `postgres://postgres:${encodeURIComponent(dbPassword)}@db.${projectRef}.supabase.co:5432/postgres`
       : "");
 
+  const adminUsername = Deno.env.get("ADMIN_USERNAME") ?? "trackweeb";
+  const adminAuthEmail =
+    Deno.env.get("ADMIN_AUTH_EMAIL") ??
+    Deno.env.get("ADMIN_EMAIL") ??
+    usernameToAuthEmail(adminUsername);
+
   return {
     supabaseUrl,
     serviceKey,
     dbUrl,
-    adminEmail: Deno.env.get("ADMIN_EMAIL") ?? "admin@trackweeb.cm",
+    adminUsername,
+    adminAuthEmail,
     adminPassword: Deno.env.get("ADMIN_PASSWORD") ?? "admin123",
     adminFullName: Deno.env.get("ADMIN_FULL_NAME") ?? "Admin",
     tenantName: Deno.env.get("TENANT_NAME") ?? "Logistics Inc",
@@ -78,14 +100,14 @@ async function ensureAdmin(admin: ReturnType<typeof createClient>, cfg: ReturnTy
   if (tenantError) throw tenantError;
 
   const { data: listed } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
-  let userId = listed?.users.find((u) => u.email?.toLowerCase() === cfg.adminEmail.toLowerCase())?.id;
+  let userId = listed?.users.find((u) => u.email?.toLowerCase() === cfg.adminAuthEmail.toLowerCase())?.id;
 
   if (!userId) {
     const { data: created, error: createError } = await admin.auth.admin.createUser({
-      email: cfg.adminEmail,
+      email: cfg.adminAuthEmail,
       password: cfg.adminPassword,
       email_confirm: true,
-      user_metadata: { full_name: cfg.adminFullName },
+      user_metadata: { full_name: cfg.adminFullName, username: cfg.adminUsername },
     });
     if (createError) throw createError;
     userId = created.user.id;
@@ -93,7 +115,7 @@ async function ensureAdmin(admin: ReturnType<typeof createClient>, cfg: ReturnTy
     await admin.auth.admin.updateUserById(userId, {
       password: cfg.adminPassword,
       email_confirm: true,
-      user_metadata: { full_name: cfg.adminFullName },
+      user_metadata: { full_name: cfg.adminFullName, username: cfg.adminUsername },
     });
   }
 
@@ -129,7 +151,7 @@ Deno.serve(async (req) => {
     });
 
     const schemaReady = await isSchemaReady(admin, cfg.tenantSubdomain);
-    const adminReady = schemaReady ? await isAdminReady(admin, cfg.adminEmail) : false;
+    const adminReady = schemaReady ? await isAdminReady(admin, cfg.adminAuthEmail) : false;
 
     if (schemaReady && adminReady) {
       return new Response(JSON.stringify({ alreadySetup: true }), {

@@ -36,7 +36,7 @@ Default admin (created automatically if missing):
 
 | Field | Value |
 |-------|-------|
-| Email | `admin@trackweeb.cm` |
+| Username | `trackweeb` |
 | Password | `admin123` |
 | Tenant | Logistics Inc (`logistics-inc`) |
 
@@ -73,7 +73,7 @@ supabase secrets set \
   RESEND_FROM_EMAIL="Trackweeb <onboarding@resend.dev>" \
   SUPPORT_EMAIL=... \
   SUPABASE_DB_PASSWORD=... \
-  ADMIN_EMAIL=admin@trackweeb.cm \
+  ADMIN_USERNAME=trackweeb \
   ADMIN_PASSWORD=admin123
 supabase functions deploy send-email
 supabase functions deploy ensure-setup

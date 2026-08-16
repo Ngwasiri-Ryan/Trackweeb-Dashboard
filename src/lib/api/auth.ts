@@ -1,7 +1,9 @@
 import { supabase, getProfile } from "../supabase";
+import { authEmailToUsername, usernameToAuthEmail } from "../auth-username";
 
 export type AdminUser = {
   id: string;
+  username: string;
   email: string;
   full_name: string;
   role: string;
@@ -16,8 +18,15 @@ export type AdminUser = {
   tenant_name?: string;
 };
 
-export async function login(email: string, password: string) {
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+function resolveUsername(email: string, metadata?: Record<string, unknown>) {
+  const fromMeta = metadata?.username;
+  if (typeof fromMeta === "string" && fromMeta.trim()) return fromMeta.trim().toLowerCase();
+  return authEmailToUsername(email) ?? email;
+}
+
+export async function login(username: string, password: string) {
+  const authEmail = usernameToAuthEmail(username);
+  const { data, error } = await supabase.auth.signInWithPassword({ email: authEmail, password });
   if (error) throw error;
   const profile = await getProfile();
   if (!profile) throw new Error("Profile not found");
@@ -28,12 +37,14 @@ export async function login(email: string, password: string) {
     logo_url: string | null;
     timezone: string;
   };
+  const resolvedUsername = resolveUsername(profile.user.email ?? authEmail, profile.user.user_metadata);
   return {
     token: data.session?.access_token ?? "",
     expires_at: data.session?.expires_at ?? "",
     user: {
       id: profile.user.id,
-      email: profile.user.email ?? email,
+      username: resolvedUsername,
+      email: profile.user.email ?? authEmail,
       full_name: profile.profile.full_name,
       role: profile.profile.role ?? "admin",
       tenant_id: profile.profile.tenant_id,
@@ -57,9 +68,11 @@ export async function fetchMe(): Promise<AdminUser> {
     logo_url: string | null;
     timezone: string;
   };
+  const email = profile.user.email ?? "";
   return {
     id: profile.user.id,
-    email: profile.user.email ?? "",
+    username: resolveUsername(email, profile.user.user_metadata),
+    email,
     full_name: profile.profile.full_name,
     role: profile.profile.role ?? "admin",
     tenant_id: profile.profile.tenant_id,

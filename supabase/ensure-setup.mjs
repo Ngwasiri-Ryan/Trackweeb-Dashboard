@@ -54,7 +54,7 @@ async function findUserByEmail(config, email) {
 }
 
 async function isAdminReady(config) {
-  const user = await findUserByEmail(config, config.adminEmail);
+  const user = await findUserByEmail(config, config.adminAuthEmail);
   if (!user) return false;
 
   const { ok, data } = await api(config, `/rest/v1/profiles?select=id&id=eq.${user.id}&limit=1`);
@@ -150,31 +150,31 @@ async function ensureAuthUser(config, log = console.log) {
   let create = await api(config, "/auth/v1/admin/users", {
     method: "POST",
     body: JSON.stringify({
-      email: config.adminEmail,
+      email: config.adminAuthEmail,
       password: config.adminPassword,
       email_confirm: true,
-      user_metadata: { full_name: config.adminFullName },
+      user_metadata: { full_name: config.adminFullName, username: config.adminUsername },
     }),
   });
 
   if (create.ok) {
-    log(`Created admin user: ${config.adminEmail}`);
+    log(`Created admin user: ${config.adminUsername}`);
     return create.data.id ?? create.data.user?.id;
   }
 
   if (create.status === 422 || create.data?.msg?.includes("already")) {
-    const existing = await findUserByEmail(config, config.adminEmail);
-    if (!existing) throw new Error(`User exists but could not be found: ${config.adminEmail}`);
+    const existing = await findUserByEmail(config, config.adminAuthEmail);
+    if (!existing) throw new Error(`User exists but could not be found: ${config.adminAuthEmail}`);
 
     const update = await api(config, `/auth/v1/admin/users/${existing.id}`, {
       method: "PUT",
       body: JSON.stringify({
         password: config.adminPassword,
         email_confirm: true,
-        user_metadata: { full_name: config.adminFullName },
+        user_metadata: { full_name: config.adminFullName, username: config.adminUsername },
       }),
     });
-    if (update.ok) log(`Admin user ready: ${config.adminEmail}`);
+    if (update.ok) log(`Admin user ready: ${config.adminUsername}`);
     return existing.id;
   }
 
@@ -196,7 +196,7 @@ async function ensureProfile(config, userId, log = console.log) {
     ]),
   });
   if (!upsert.ok) throw new Error(`Profile upsert failed: ${JSON.stringify(upsert.data)}`);
-  log(`Admin profile linked: ${config.adminEmail}`);
+  log(`Admin profile linked: ${config.adminUsername}`);
 }
 
 async function ensureAdmin(config, log = console.log) {

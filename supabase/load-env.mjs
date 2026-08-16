@@ -4,6 +4,8 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+import { usernameToAuthEmail } from "./lib/auth-username.mjs";
+
 export function loadDotEnv(path) {
   if (!existsSync(path)) return;
   for (const line of readFileSync(path, "utf8").split("\n")) {
@@ -39,11 +41,18 @@ export function getSetupConfig() {
       ? `postgresql://postgres.${projectRef}:${encodeURIComponent(dbPassword)}@${dbPooler}-${dbRegion}.pooler.supabase.com:5432/postgres`
       : "");
 
+  const adminUsername = process.env.ADMIN_USERNAME ?? "trackweeb";
+  const adminAuthEmail =
+    process.env.ADMIN_AUTH_EMAIL ??
+    process.env.ADMIN_EMAIL ??
+    usernameToAuthEmail(adminUsername);
+
   return {
     supabaseUrl,
     serviceKey: process.env.SUPABASE_SERVICE_ROLE_KEY ?? "",
     dbUrl,
-    adminEmail: process.env.ADMIN_EMAIL ?? "admin@trackweeb.cm",
+    adminUsername,
+    adminAuthEmail,
     adminPassword: process.env.ADMIN_PASSWORD ?? "admin123",
     adminFullName: process.env.ADMIN_FULL_NAME ?? "Admin",
     tenantName: process.env.TENANT_NAME ?? "Logistics Inc",

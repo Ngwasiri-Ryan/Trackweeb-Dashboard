@@ -11,15 +11,14 @@ import { brand } from "@/lib/brand";
 export default function LoginPage() {
   const navigate = useNavigate();
   const mapPanelRef = useRef<HTMLDivElement>(null);
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [forgotOpen, setForgotOpen] = useState(false);
-  const [isSignUpMode, setIsSignUpMode] = useState(false);
   const [showMapOnMobile, setShowMapOnMobile] = useState(false);
 
   const loginM = useMutation({
-    mutationFn: () => login(email, password),
+    mutationFn: () => login(username, password),
     onSuccess: () => {
       toast.success("Welcome back");
       navigate({ to: "/dashboard" });
@@ -31,16 +30,12 @@ export default function LoginPage() {
           : err instanceof Error
             ? err.message
             : "Login failed";
-      toast.error(msg);
+      toast.error(msg === "Invalid login credentials" ? "Invalid username or password" : msg);
     },
   });
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (isSignUpMode) {
-      toast.info("Admin accounts are provisioned by your organization.");
-      return;
-    }
     loginM.mutate();
   }
 
@@ -71,35 +66,26 @@ export default function LoginPage() {
           <div className="mx-auto my-8 w-full max-w-md">
             <div className="mb-8 text-center sm:text-left">
               <h1 className="mb-2 text-2xl font-extrabold tracking-tight sm:text-3xl">
-                {isSignUpMode ? `Create a ${brand.name} account` : `Welcome back to ${brand.name}`}
+                Welcome back to {brand.name}
               </h1>
               <p className="text-xs leading-relaxed sm:text-sm" style={{ color: "var(--login-text-muted)" }}>
-                {isSignUpMode
-                  ? "Sign up and get 30 days free trial for your logistics fleet."
-                  : "Sign in to access your tracking dashboard and manage assets."}
+                Sign in with your username and password to access the tracking dashboard.
               </p>
             </div>
 
             <form className="space-y-4" onSubmit={handleSubmit}>
-              {isSignUpMode ? (
-                <div>
-                  <label className="login-label">Username / Fleet ID</label>
-                  <input type="text" placeholder="Enter your name or fleet code" className="login-input" />
-                </div>
-              ) : null}
-
               <div>
-                <label className="login-label" htmlFor="email">
-                  Work email
+                <label className="login-label" htmlFor="username">
+                  Username
                 </label>
                 <input
-                  id="email"
-                  type="email"
-                  autoComplete="email"
+                  id="username"
+                  type="text"
+                  autoComplete="username"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@company.com"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="trackweeb"
                   className="login-input"
                 />
               </div>
@@ -146,30 +132,22 @@ export default function LoginPage() {
                   {loginM.isPending ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Authenticating fleet…
+                      Signing in…
                     </>
                   ) : (
-                    <span>{isSignUpMode ? "Create free account" : "Sign in"}</span>
+                    <span>Sign in</span>
                   )}
                 </button>
               </div>
             </form>
           </div>
 
-          <div
+          <p
             className="border-t pt-4 text-xs font-semibold"
             style={{ borderColor: "var(--login-border)", color: "var(--login-text-muted)" }}
           >
-            {isSignUpMode ? "Already have an account?" : "Don't have an account?"}{" "}
-            <button
-              type="button"
-              onClick={() => setIsSignUpMode((v) => !v)}
-              className="ml-1 font-bold underline"
-              style={{ color: "var(--login-text)" }}
-            >
-              {isSignUpMode ? "Sign in" : "Create one"}
-            </button>
-          </div>
+            Admin accounts are provisioned by your organization.
+          </p>
         </div>
 
         <div
@@ -195,27 +173,14 @@ export default function LoginPage() {
               <div className="login-modal-icon mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full text-lg">
                 <KeyRound className="h-5 w-5" />
               </div>
-              <h3 className="text-xl font-bold">Reset fleet password</h3>
+              <h3 className="text-xl font-bold">Reset password</h3>
               <p className="mt-1 text-xs" style={{ color: "var(--login-text-muted)" }}>
-                Enter your registered email address to receive password recovery instructions.
+                Contact your system administrator to reset your dashboard password.
               </p>
             </div>
-            <form
-              className="space-y-4"
-              onSubmit={(e) => {
-                e.preventDefault();
-                setForgotOpen(false);
-                toast.success("If an account exists, a recovery link will be sent.");
-              }}
-            >
-              <div>
-                <label className="login-label">Registered work email</label>
-                <input type="email" required placeholder="dispatcher@company.com" className="login-input" />
-              </div>
-              <button type="submit" className="login-btn-primary">
-                Send reset link
-              </button>
-            </form>
+            <button type="button" onClick={() => setForgotOpen(false)} className="login-btn-primary w-full">
+              Close
+            </button>
           </div>
         </div>
       ) : null}

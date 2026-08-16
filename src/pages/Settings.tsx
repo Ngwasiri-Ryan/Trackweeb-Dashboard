@@ -138,7 +138,7 @@ export default function SettingsPage() {
                   {(me?.full_name?.[0] ?? me?.email?.[0] ?? "A").toUpperCase()}
                 </div>
                 <h3 className="mt-3 text-sm font-bold text-foreground">{me?.full_name ?? "Admin"}</h3>
-                <p className="text-xs text-muted-foreground">{me?.email}</p>
+                <p className="text-xs text-muted-foreground">@{me?.username ?? "admin"}</p>
                 <span className="verified-badge mt-2">
                   <Shield className="h-3 w-3" />
                   Verified admin
@@ -152,7 +152,7 @@ export default function SettingsPage() {
                 <h3 className="section-heading">Account Details</h3>
               </div>
               <InfoRow label="Full name" value={me?.full_name ?? "—"} />
-              <InfoRow label="Email" value={me?.email ?? "—"} mono />
+              <InfoRow label="Username" value={me?.username ?? "—"} mono />
               <InfoRow label="Organization" value={me?.tenant?.name ?? me?.tenant_name ?? "—"} />
               <InfoRow label="Role" value="Administrator" />
             </SurfaceCard>
