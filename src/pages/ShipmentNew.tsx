@@ -61,9 +61,6 @@ export default function NewShipmentPage() {
   const [speedKmh, setSpeedKmh] = useState("");
   const [serviceType, setServiceType] = useState<string>("standard");
   const [parcelQty, setParcelQty] = useState("1");
-  const [lengthCm, setLengthCm] = useState("");
-  const [widthCm, setWidthCm] = useState("");
-  const [heightCm, setHeightCm] = useState("");
   const [shippingDate, setShippingDate] = useState("");
   const [departTime, setDepartTime] = useState("");
   const [distanceKm, setDistanceKm] = useState("");
@@ -200,14 +197,6 @@ export default function NewShipmentPage() {
         speed_kmh: speedKmh ? Number(speedKmh) : undefined,
         service_type: serviceType as CreateShipmentInput["service_type"],
         parcel_quantity: parcelQty ? Number(parcelQty) : 1,
-        parcel_dimensions:
-          lengthCm || widthCm || heightCm
-            ? {
-                length_cm: lengthCm ? Number(lengthCm) : undefined,
-                width_cm: widthCm ? Number(widthCm) : undefined,
-                height_cm: heightCm ? Number(heightCm) : undefined,
-              }
-            : undefined,
         notes: notes || undefined,
         route_id: routeId && routeId !== "none" ? routeId : undefined,
       }),
@@ -504,18 +493,6 @@ export default function NewShipmentPage() {
                       onChange={(e) => setShippingDate(e.target.value)}
                       required
                     />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Length (cm)</Label>
-                    <Input type="number" min={0} value={lengthCm} onChange={(e) => setLengthCm(e.target.value)} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Width (cm)</Label>
-                    <Input type="number" min={0} value={widthCm} onChange={(e) => setWidthCm(e.target.value)} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Height (cm)</Label>
-                    <Input type="number" min={0} value={heightCm} onChange={(e) => setHeightCm(e.target.value)} />
                   </div>
                   <div className="space-y-2">
                     <Label>Depart time</Label>

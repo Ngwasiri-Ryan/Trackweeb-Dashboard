@@ -81,15 +81,6 @@ function formatServiceType(value: string | null | undefined) {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
-function formatDimensions(
-  dims: { length_cm?: number; width_cm?: number; height_cm?: number } | null | undefined,
-) {
-  if (!dims) return "—";
-  const parts = [dims.length_cm, dims.width_cm, dims.height_cm].filter((v) => v != null);
-  if (parts.length === 0) return "—";
-  return `${dims.length_cm ?? "—"} × ${dims.width_cm ?? "—"} × ${dims.height_cm ?? "—"} cm`;
-}
-
 export default function ShipmentDetailPage() {
   const { id: routeId } = useParams();
   const id = routeId!;
@@ -543,9 +534,7 @@ export default function ShipmentDetailPage() {
               label="Parcels count"
               value={
                 s.parcel_quantity
-                  ? `${s.parcel_quantity} unit${s.parcel_quantity > 1 ? "s" : ""}${
-                      s.parcel_dimensions ? ` · ${formatDimensions(s.parcel_dimensions)}` : ""
-                    }`
+                  ? `${s.parcel_quantity} unit${s.parcel_quantity > 1 ? "s" : ""}`
                   : "1 unit"
               }
             />
