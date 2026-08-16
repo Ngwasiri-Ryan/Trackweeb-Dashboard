@@ -1,0 +1,7 @@
+# Supabase Edge Functions
+
+[functions.send-email]
+verify_jwt = false
+
+[functions.ensure-setup]
+verify_jwt = false
